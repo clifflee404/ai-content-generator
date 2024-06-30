@@ -1,23 +1,9 @@
 import Templates from "@/app/(data)/Templates"
 import React, { useEffect, useState } from "react"
 import TemplateCard from "./TemplateCard"
+import { TEMPLATE } from "@/types/template"
 
-export interface TEMPLATE {
-  name: string
-  desc: string
-  icon: string
-  category: string
-  slug: string
-  aiPrompt: string
-  form?: FORM[]
-}
 
-export interface FORM {
-  label: string
-  field: string
-  name: string
-  required?: boolean
-}
 const TemplateListSection = ({ userSearchInput }: {userSearchInput: string | undefined}) => {
   const [templateList, setTemplateList] = useState(Templates)
 
