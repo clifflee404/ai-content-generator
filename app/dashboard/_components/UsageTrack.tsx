@@ -1,5 +1,6 @@
 "use client"
 import { TotalUsageContext } from "@/app/(context)/TotalUsageContext"
+import { UpdateCreditUsageContext } from "@/app/(context)/UpdateCreditUsageContext"
 import { UserSubscriptionContext } from "@/app/(context)/UserSubscriptionContext"
 import { Button } from "@/components/ui/button"
 import { IHistory } from "@/types/common"
@@ -16,6 +17,8 @@ function UsageTrack() {
     UserSubscriptionContext
   )
   const [maxWords, setMaxWords] = useState(10000)
+  const {updateCreditUsage, setUpdateCreditUsage} = useContext(UpdateCreditUsageContext)
+
 
   useEffect(() => {
     if (user) {
@@ -24,7 +27,13 @@ function UsageTrack() {
     }
   }, [user])
 
+  useEffect(() => {
+    console.log('---[useEffect updateCreditUsage change]:', updateCreditUsage);
+    user && getData()
+  }, [updateCreditUsage && user])
+
   const getData = async () => {
+    console.log('---getDate()---', );
     const userEmail = user?.primaryEmailAddress?.emailAddress
     if (!userEmail) {
       console.error("[usageTrack getData] user emailAddress is null")

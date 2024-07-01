@@ -15,6 +15,7 @@ import moment from "moment"
 import { TotalUsageContext } from "@/app/(context)/TotalUsageContext"
 import { useRouter } from "next/navigation"
 import { UserSubscriptionContext } from "@/app/(context)/UserSubscriptionContext"
+import { UpdateCreditUsageContext } from "@/app/(context)/UpdateCreditUsageContext"
 
 interface Props {
   params: {
@@ -34,9 +35,15 @@ const CreateNewContent = (props: Props) => {
   const { userSubscription, setUserSubscription } = useContext(
     UserSubscriptionContext
   )
+  const {updateCreditUsage, setUpdateCreditUsage} = useContext(UpdateCreditUsageContext)
 
   // console.log('---user:', user);
 
+  /**
+   * Used to generate content from AI
+   * @param formData 
+   * @returns 
+   */
   const GenerateAIContent = async (formData: any) => {
     if(totalUsage >= 10000 && !userSubscription){
       console.log('Please Upgrade')
@@ -54,6 +61,8 @@ const CreateNewContent = (props: Props) => {
     setAIOutput(result?.response.text())
     await saveInDb(JSON.stringify(formData), selectedTemplate?.slug, result?.response.text())
     setLoading(false)
+
+    setUpdateCreditUsage(Date.now())
   }
 
   const saveInDb = async (formData: any, slug: any, aiResponse: string) => {
