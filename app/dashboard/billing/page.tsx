@@ -30,7 +30,29 @@ const Billing = () => {
     )
   }
 
-  const onPayment = (subId: string) => {
+  // 2024-06-26 perf
+  const loadScript = (src: any) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script")
+      script.src = src
+      script.onload = () => {
+        resolve(true)
+      }
+      script.onerror = () => {
+        resolve(false)
+      }
+      document.body.appendChild(script)
+    })
+  }
+
+  const onPayment = async (subId: string) => {
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js")
+
+    if (!res) {
+      alert("Razropay failed to load!!")
+      return
+    }
+
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       subscription_id: subId,
@@ -49,9 +71,14 @@ const Billing = () => {
       },
     }
 
-    // @ts-ignore
-    const rzp = new window.Razorpay(options)
-    rzp.open()
+    try {
+      // @ts-ignore
+      const rzp = new window.Razorpay(options)
+      rzp.open()
+    } catch (e) {
+      console.log("Try Again...", e)
+      setLoading(false)
+    }
   }
 
   const saveSubscription = async (paymentId: string) => {

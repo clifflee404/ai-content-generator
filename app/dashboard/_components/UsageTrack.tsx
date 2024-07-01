@@ -17,8 +17,9 @@ function UsageTrack() {
     UserSubscriptionContext
   )
   const [maxWords, setMaxWords] = useState(10000)
-  const {updateCreditUsage, setUpdateCreditUsage} = useContext(UpdateCreditUsageContext)
-
+  const { updateCreditUsage, setUpdateCreditUsage } = useContext(
+    UpdateCreditUsageContext
+  )
 
   useEffect(() => {
     if (user) {
@@ -28,12 +29,12 @@ function UsageTrack() {
   }, [user])
 
   useEffect(() => {
-    console.log('---[useEffect updateCreditUsage change]:', updateCreditUsage);
+    console.log("---[useEffect updateCreditUsage change]:", updateCreditUsage)
     user && getData()
   }, [updateCreditUsage && user])
 
   const getData = async () => {
-    console.log('---getDate()---', );
+    console.log("---getDate()---")
     const userEmail = user?.primaryEmailAddress?.emailAddress
     if (!userEmail) {
       console.error("[usageTrack getData] user emailAddress is null")
@@ -67,7 +68,7 @@ function UsageTrack() {
       .select()
       .from(UserSubscription)
       .where(eq(UserSubscription.email, userEmail))
-    console.log('---isUserSubscribe:', result);
+    console.log("---isUserSubscribe:", result)
     if (result && result.length > 0) {
       setUserSubscription(true)
       setMaxWords(1000000)
@@ -82,11 +83,16 @@ function UsageTrack() {
           <div
             className="h-2 bg-white rounded-full"
             style={{
-              width: (totalUsage / maxWords) * 100 + "%",
+              width:
+                totalUsage / maxWords > 1
+                  ? 100 + "%"
+                  : (totalUsage / maxWords) * 100 + "%",
             }}
           ></div>
         </div>
-        <h2 className="text-sm my-2">{totalUsage}/{maxWords} credit used</h2>
+        <h2 className="text-sm my-2">
+          {totalUsage}/{maxWords} credit used
+        </h2>
       </div>
       <Button variant="secondary" className="w-full my-3 text-primary">
         Upgrade
