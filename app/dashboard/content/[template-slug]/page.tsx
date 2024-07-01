@@ -14,6 +14,7 @@ import { useUser } from "@clerk/nextjs"
 import moment from "moment"
 import { TotalUsageContext } from "@/app/(context)/TotalUsageContext"
 import { useRouter } from "next/navigation"
+import { UserSubscriptionContext } from "@/app/(context)/UserSubscriptionContext"
 
 interface Props {
   params: {
@@ -30,11 +31,14 @@ const CreateNewContent = (props: Props) => {
   const { user } = useUser()
   const { totalUsage, setTotalUsage } = useContext(TotalUsageContext)
   const router = useRouter()
+  const { userSubscription, setUserSubscription } = useContext(
+    UserSubscriptionContext
+  )
 
   // console.log('---user:', user);
 
   const GenerateAIContent = async (formData: any) => {
-    if(totalUsage >= 10000){
+    if(totalUsage >= 10000 && !userSubscription){
       console.log('Please Upgrade')
       router.push('/dashboard/billing')
       return
