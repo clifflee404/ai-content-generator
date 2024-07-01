@@ -47,7 +47,7 @@ const FormSection = ({ selectedTemplate, userFormInput, loading }: Props) => {
           </div>
         ))}
 
-        <Button type="submit" className="w-full  py-6"
+        <Button type="submit" className="w-full py-6 gap-2"
         disabled={loading}
         >
           {loading && <Loader2Icon className="animate-spin"/>}
