@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import FormSection from "./_components/FormSection"
 import OutputSection from "./_components/OutputSection"
 import Templates from "@/app/(data)/Templates"
@@ -12,6 +12,8 @@ import { db } from "@/utils/db"
 import { AIOutput } from "@/utils/schema"
 import { useUser } from "@clerk/nextjs"
 import moment from "moment"
+import { TotalUsageContext } from "@/app/(context)/TotalUsageContext"
+import { useRouter } from "next/navigation"
 
 interface Props {
   params: {
@@ -26,8 +28,17 @@ const CreateNewContent = (props: Props) => {
   const [loading, setLoading] = useState(false)
   const [aiOutput, setAIOutput] = useState<string>("")
   const { user } = useUser()
+  const { totalUsage, setTotalUsage } = useContext(TotalUsageContext)
+  const router = useRouter()
+
+  // console.log('---user:', user);
 
   const GenerateAIContent = async (formData: any) => {
+    if(totalUsage >= 10000){
+      console.log('Please Upgrade')
+      router.push('/dashboard/billing')
+      return
+    }
     setLoading(true)
     const SelectedPrompt = selectedTemplate?.aiPrompt
 
@@ -42,14 +53,19 @@ const CreateNewContent = (props: Props) => {
   }
 
   const saveInDb = async (formData: any, slug: any, aiResponse: string) => {
-    const result = await db.insert(AIOutput).values({
+    const params = {
       formData,
       templateSlug: slug,
       aiResponse,
       createdBy: user?.primaryEmailAddress?.emailAddress as string,
       createdAt: moment().format('yyyy/MM/DD')
-
-    })
+    }
+    console.log('---[saveInDb] params:', params);
+    if(!params.createdBy){
+      console.error('[saveInDb] user emailAddress is null');
+      return
+    }
+    const result = await db.insert(AIOutput).values(params)
     console.log('---saveInDb:', result);
   }
 

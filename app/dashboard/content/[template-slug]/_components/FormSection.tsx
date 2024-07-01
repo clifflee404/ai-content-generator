@@ -37,7 +37,7 @@ const FormSection = ({ selectedTemplate, userFormInput, loading }: Props) => {
 
       <form className="mt-6"  onSubmit={handleSubmit}>
         {selectedTemplate.form?.map((item, index) => (
-          <div className="my-2 flex flex-col gap-2 mb-7">
+          <div className="my-2 flex flex-col gap-2 mb-7" key={item.label + index}>
             <label className="font-bold" htmlFor={item.label}>{item.label}</label>
             {item.field === "input" ? (
               <Input name={item.name} required={item.required} onChange={handleInputChange}/>
